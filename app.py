@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
+st.title('Mi Aplicación Streamlit con DataFrame y Gráfica - hola soy helen y estoy estudiando fundamentos para el analisis de datos')
 st.title('Mi Aplicación Streamlit con DataFrame y Gráfica')
 
 # 1. Crear un DataFrame de ejemplo
