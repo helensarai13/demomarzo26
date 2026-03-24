@@ -14,10 +14,24 @@ try:
 except FileNotFoundError:
     st.error("Error: El archivo 'dc-wikia-data.csv' no se encontró. Asegúrate de que la ruta sea correcta.")
     st.stop()
+
 # --- Opción para ver el DataFrame completo ---
 if st.checkbox('Mostrar DataFrame Completo'):
     st.subheader('DataFrame Completo de Personajes de Cómics DC')
-    st.dataframe(comics_df, use_container_width=True)
+
+    search_query = st.text_input('Buscar en el DataFrame:', '')
+
+    if search_query:
+        # Filtrar solo columnas de tipo objeto (cadenas) o de tipo mixto para evitar errores
+        string_cols = comics_df.select_dtypes(include=['object']).columns
+        # Crear una máscara booleana para filtrar las filas
+        # Convertir a cadena y luego aplicar .str.contains() de forma segura
+        filtered_df = comics_df[
+            comics_df.astype(str).apply(lambda row: row.str.contains(search_query, case=False, na=False).any(), axis=1)
+        ]
+        st.dataframe(filtered_df, use_container_width=True)
+    else:
+        st.dataframe(comics_df, use_container_width=True)
 
 # --- 1. Distribución de la Alineación de Personajes (ALIGN) ---
 st.header('1. Distribución de la Alineación de Personajes')
@@ -42,6 +56,7 @@ fig_align_pie = px.pie(
 )
 fig_align_pie.update_traces(textposition='inside', textinfo='percent+label')
 st.plotly_chart(fig_align_pie, use_container_width=True)
+
 # Añadir botón de descarga para align_counts
 st.download_button(
     label="Descargar datos de alineación (CSV)",
