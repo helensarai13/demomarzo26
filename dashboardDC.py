@@ -17,7 +17,7 @@ except FileNotFoundError:
 # --- Opción para ver el DataFrame completo ---
 if st.checkbox('Mostrar DataFrame Completo'):
     st.subheader('DataFrame Completo de Personajes de Cómics DC')
-    st.dataframe(comics_df)
+    st.dataframe(comics_df, use_container_width=True)
 
 # --- 1. Distribución de la Alineación de Personajes (ALIGN) ---
 st.header('1. Distribución de la Alineación de Personajes')
