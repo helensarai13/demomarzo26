@@ -1,0 +1,86 @@
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+# Cargar los datos (asegúrate de que la ruta del archivo sea correcta si lo ejecutas localmente)
+file_path = 'datos/SalidaVentas.xlsx'
+df = pd.read_excel(file_path)
+
+# --- Configuración de la página de Streamlit ---
+st.set_page_config(page_title="Dashboard de Ventas", layout="wide")
+
+st.title("📈 Dashboard Interactivo de Ventas")
+
+st.markdown("--- equipo
+
+")
+
+# --- Visualización de Datos Crudos ---
+st.subheader("Vista Previa de los Datos")
+st.dataframe(df.head())
+
+# --- Métricas Clave ---
+st.markdown("## Métricas Clave")
+col1, col2, col3 = st.columns(3)
+
+total_sales = df['Sales'].sum()
+total_profit = df['Profit'].sum()
+total_quantity = df['Quantity'].sum()
+
+col1.metric("Ventas Totales", f"${total_sales:,.2f}")
+col2.metric("Ganancia Total", f"${total_profit:,.2f}")
+col3.metric("Cantidad Total", f"{total_quantity:,}")
+
+st.markdown("--- equipo
+
+")
+
+# --- Análisis por Región ---
+st.subheader("Ventas y Ganancias por Región")
+
+sales_by_region = df.groupby('Region')['Sales'].sum().reset_index()
+profit_by_region = df.groupby('Region')['Profit'].sum().reset_index()
+
+# Gráfico de Ventas por Región
+fig_sales_region = px.bar(
+    sales_by_region,
+    x='Region',
+    y='Sales',
+    title='Ventas Totales por Región',
+    color='Region',
+    template='plotly_white'
+)
+st.plotly_chart(fig_sales_region, use_container_width=True)
+
+# Gráfico de Ganancias por Región
+fig_profit_region = px.bar(
+    profit_by_region,
+    x='Region',
+    y='Profit',
+    title='Ganancias Totales por Región',
+    color='Region',
+    template='plotly_white'
+)
+st.plotly_chart(fig_profit_region, use_container_width=True)
+
+st.markdown("--- equipo
+
+")
+
+# --- Análisis de Ventas a lo largo del Tiempo ---
+st.subheader("Tendencias de Ventas a lo largo del Tiempo")
+
+df['Order Month'] = df['Order Date'].dt.to_period('M')
+sales_over_time = df.groupby('Order Month')['Sales'].sum().reset_index()
+sales_over_time['Order Month'] = sales_over_time['Order Month'].astype(str)
+
+fig_time_series = px.line(
+    sales_over_time,
+    x='Order Month',
+    y='Sales',
+    title='Ventas Mensuales a lo largo del Tiempo',
+    markers=True,
+    template='plotly_white'
+)
+st.plotly_chart(fig_time_series, use_container_width=True)
+
